@@ -5,16 +5,17 @@ import os
 from subprocess import call
 
 #your github user credentials.
-u='yourusername'
-p='yourpassword'
+u='yourgithubusername'
+p='yourgithubpassword'
 
 # where to store your repositories locally (absolute path plz!). Create the directory if needed.
-myrepos='~/myrepos'
+myrepos='/home/mylocalusername/myrepos'
+
 if (os.path.isdir(myrepos) == False):
     call("mkdir -p " + myrepos, shell=True)
 
 # a list of your organisations.
-orgs = ['listof', 'your', 'organisations']
+orgs = ['list-of', 'my-organizations']
 
 # headers sent to the github api.
 headers = {'Content-type': 'application/x-www-form-urlencoded', 'Accept': 'application/json', }
@@ -45,10 +46,13 @@ for org in orgs:
 # loop through the array of repos and either clone them locally, 
 # or if they exist run git pull on each and every one of them.
 for repo in repos:
-    if (os.path.isdir( repo['full_name'] + '/.git')):
+    mypath = os.path.join(myrepos, repo['full_name'])
+    mygitpath = os.path.join(myrepos, repo['full_name'], ".git")
+    if (os.path.isdir(mygitpath)):
         # go into each directory and run git pull.
-        call("cd " + myrepos + "/" + repo['full_name'] + " && git pull", shell=True)
+        call("cd " + mypath + " && git pull", shell=True)
     else: 
         # run git clone if the repository doesn't exist.
-        fetchurl = 'git clone ' + repo['ssh_url'] + ' ' + repo['full_name']
+        fetchurl = "git clone " + repo['ssh_url'] + " " + repo['full_name']
         call("cd " + myrepos + " && " + fetchurl, shell=True)
+
